@@ -45,3 +45,21 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: milssky/cicd_test:latest
+
+  deploy:
+    runs-on: ubuntu-20.04
+    needs: push_to_registry
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    steps:
+      - name: execute ssh commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          key: ${{secrets.SSH_KEY}}
+          script: |
+            sudo docker compose stop
+            sudo docker compose rm web
+            sudo docker image rm milssky/cicd_test:latest
+            sudo docker pull milssky/cicd_test:latest
+            sudo docker compose up -d
