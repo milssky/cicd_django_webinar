@@ -58,7 +58,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{secrets.SSH_HOST}}
-          user: ${{secrets.SSH_USERNAME}}
+          username: ${{secrets.SSH_USERNAME}}
           key: ${{secrets.SSH_KEY}}
           script: |
             sudo docker compose stop
