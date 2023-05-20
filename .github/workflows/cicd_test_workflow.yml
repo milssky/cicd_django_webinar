@@ -64,4 +64,4 @@ jobs:
             sudo docker compose stop
             sudo docker compose rm web
             sudo docker pull milssky/cicd_test:latest
-            sudo compose up -d
+            sudo docker compose up -d
