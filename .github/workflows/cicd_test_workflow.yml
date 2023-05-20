@@ -61,6 +61,7 @@ jobs:
           username: ${{secrets.SSH_USERNAME}}
           key: ${{secrets.SSH_KEY}}
           script: |
+            cd cicd_test/
             sudo docker compose stop
             sudo docker compose rm web
             sudo docker pull milssky/cicd_test:latest
