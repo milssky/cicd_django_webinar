@@ -23,6 +23,7 @@ jobs:
     needs: tests
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -46,3 +47,21 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: milssky/cicd_test:latest
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-20.04
+    needs: push_to_hub
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Execute ssh commands
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{secrets.SSH_HOST}}
+          user: ${{secrets.SSH_USER}}
+          key: ${{secrets.SSH_KEY}}
+          script: |
+            sudo docker compose stop
+            sudo docker compose rm web
+            sudo docker pull milssky/cicd_test:latest
+            sudo compose up -d
